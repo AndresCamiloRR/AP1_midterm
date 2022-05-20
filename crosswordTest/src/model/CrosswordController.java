@@ -20,6 +20,29 @@ public class CrosswordController {
 	 */
 	public void initCrossword(String[][] puzzle) {
 		
+		crossword = new Cell[puzzle.length][puzzle[0].length];
+		int counter=1;
+
+		for(int i=0; i<puzzle.length; i++){
+
+			for(int j=0; j<puzzle[0].length; j++){
+
+
+				if(puzzle[i][j].equals(" ")){
+
+					crossword[i][j]=new Cell(CellType.BLACK, puzzle[i][j], counter);
+
+				}else{
+
+					crossword[i][j]=new Cell(CellType.CLOSED, puzzle[i][j], counter);
+					counter++;
+
+				}
+
+			}
+
+		}
+
 		
 	}
 	/**
@@ -52,7 +75,33 @@ public class CrosswordController {
 	 */
 	public String getHint(String letter) {
 		
-		return null;
+		String msg="";
+		boolean flag=true;
+
+		for(int i=0;i<crossword.length&&flag;i++){
+
+			for(int j=0; j<crossword[0].length&&flag; j++){
+
+				if(crossword[i][j]!=null&&crossword[i][j].getState()==CellType.CLOSED&&crossword[i][j].getLetter().equals(letter)){
+
+					crossword[i][j].setState(CellType.OPEN);
+					flag=false;
+
+					msg="Hay una palabra con la letra " + letter + " en la casilla " + (i+j+1);
+
+				}
+
+			}
+
+		}
+
+		if(msg.equals("")){
+
+			msg="No hay palabras con la letra " + letter;
+
+		}
+
+		return msg;
 	}
 	
 	/**
@@ -63,9 +112,109 @@ public class CrosswordController {
 	 */
 	public String evaluateCell(String letter, int num) {
 		
-		return null;
+		String msg="";
+
+		boolean flag = true;
+
+		int counter=1;
+
+		for(int i=0; i<crossword.length&&flag; i++){
+
+			for(int j=0; j<crossword[0].length&&flag; j++){
+
+				if(num>=(i+j+1)){
+
+					if(crossword[i][j]!=null&&num==counter&&crossword[i][j].getState()==CellType.CLOSED&&crossword[i][j].getLetter().equals(letter)){
+
+					crossword[i][j].setState(CellType.OPEN);
+					
+					msg="La letra " + letter + " Si esta en la casilla " + num;
+
+					flag=false;
+
+					}
+
+				}else{
+
+					flag=false;
+
+				}
+
+				counter++;
+
+			}
+
+		}
+
+		if(msg.equals("")){
+
+			msg="Lo siento, la letra " + letter + " no esta en la casilla " + num;
+
+		}
+		
+		return msg;
 	}
 	
+	public String playCrossword() {
+		int rows= crossword.length;
+		int columns= crossword[0].length;
+	
+		String out="";
+		String separator = "+---+ ";
+		String line = "" + String.join("", Collections.nCopies(columns, separator));
+		
+		
+		String numbers ="";
+		String letters = "";
+		int count =0;
+		for(int i=0 ;i<rows ; i++) {
+			numbers ="";
+			letters ="";
+			for(int j=0 ;j<columns ; j++) {
+				count++;
+				Cell actual = crossword[i][j];
+				
+				// numeros de dos cifras
+				if (count>10) {
+					//empty cell
+					if (actual.getState()==CellType.BLACK) {
+						numbers += " ---  ";
+						letters += " ---  ";
+						
+					}else if(actual.getState()==CellType.CLOSED){
+						numbers += " "+actual.getNumber() +"   ";
+						letters += "    "+ "  ";
+					}else{
+						numbers += " "+actual.getNumber() +"   ";
+						letters += "    "+ actual.getLetter() + " ";
+					}
+				}else //una cifra
+				{
+					//empty cell
+					if (actual.getState()==CellType.BLACK) {
+						numbers += " ---  ";
+						letters += " ---  ";
+						
+					}else if(actual.getState()==CellType.CLOSED){
+						numbers += " "+actual.getNumber() +"    ";
+						letters += "    "+ "  ";
+					}else {
+						numbers += " "+actual.getNumber() +"    ";
+						letters += "    "+ actual.getLetter() + " ";
+					}
+				}
+			}
+			//por cada fila se imprimen las lineas
+			out+= line + "\n";
+			out+= numbers + "\n";
+			out+= letters + "\n";
+			
+			
+		}
+		out+= line + "\n";
+		return out;
+	}
+
 	public String showCrossword() {
 		int rows= crossword.length;
 		int columns= crossword[0].length;
@@ -119,6 +268,5 @@ public class CrosswordController {
 		out+= line + "\n";
 		return out;
 	}
-
 
 }

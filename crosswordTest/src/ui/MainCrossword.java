@@ -45,6 +45,7 @@ public class MainCrossword {
 				"(3) Provide a hint\n"+
 				"(4) Evaluate cell\n" +
 				"(5) Evaluate word\n"+
+				"(6) Play Crossword\n" +
 				"(0) To leave the application"
 				);
 		option= sc.nextInt();
@@ -74,6 +75,9 @@ public class MainCrossword {
 			break;
 		case 5:
 			evaluateWord();
+			break;
+		case 6:
+			printPlayCrossword();
 			break;
 		default:
 			System.out.println("Error, wrong option");
@@ -140,7 +144,21 @@ private void intGame() {
 		
 	}
 
-
+/**
+ * Method for printing the crossword puzzle 
+ */
+	public void printPlayCrossword() {
+		
+		//Se pregunta si el juego está inicializado
+		if(crossword.isInitialized()) {
+			System.out.println(crossword.playCrossword());
+			
+			
+		}else {
+			System.out.println("\nSorry dude, the game is not initialized\n");
+		}
+		
+	}
 
 
 }
